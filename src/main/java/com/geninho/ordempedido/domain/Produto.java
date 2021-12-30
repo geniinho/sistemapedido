@@ -7,11 +7,8 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 @Getter
 @Setter
-@NoArgsConstructor
-@AllArgsConstructor
 @EqualsAndHashCode
 @Entity
 public class Produto  implements Serializable {
@@ -33,4 +30,12 @@ public class Produto  implements Serializable {
     @JsonBackReference
     private List<Categoria> categorias = new ArrayList<>();
 
+    public Produto(Integer id, String nome, double preco) {
+        this.id = id;
+        this.nome = nome;
+        this.preco = preco;
+    }
+
+    public Produto() {
+    }
 }

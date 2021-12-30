@@ -7,9 +7,6 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
-@NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 @EqualsAndHashCode
@@ -27,4 +24,11 @@ public class Categoria implements Serializable {
     @ManyToMany(mappedBy = "categorias")
     private List<Produto> produtos = new ArrayList<>();
 
+    public Categoria(Integer id, String nome) {
+        this.id = id;
+        this.nome = nome;
+    }
+
+    public Categoria() {
+    }
 }
