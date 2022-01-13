@@ -1,5 +1,6 @@
 package com.geninho.ordempedido.domain;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -29,6 +30,8 @@ public class Endereco implements Serializable {
     @JoinColumn(name = "cliente_id")
     private Cliente cliente;
 
+
+    @JsonBackReference
     @ManyToOne
     @JoinColumn(name = "cidade_id")
     private Cidade cidade;
