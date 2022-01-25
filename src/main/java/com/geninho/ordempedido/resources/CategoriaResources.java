@@ -2,14 +2,15 @@ package com.geninho.ordempedido.resources;
 
 import com.geninho.ordempedido.domain.Categoria;
 import com.geninho.ordempedido.services.CategoriaService;
+import com.geninho.ordempedido.services.Exception.DataIntegrityViolation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
-import java.util.ArrayList;
-import java.util.List;
+
 
 @RestController
 @RequestMapping(value = "/categorias")
@@ -39,6 +40,17 @@ public class CategoriaResources {
     public ResponseEntity<Void> update(@RequestBody Categoria obj,@PathVariable Integer id){
         obj.setId(id);
         obj = service.update(obj);
+        return ResponseEntity.noContent().build();
+    }
+
+    @DeleteMapping(value = "/{id}")
+    public ResponseEntity<Void> delete(@PathVariable Integer id){
+        try{
+            service.delete(id);
+        }
+        catch (DataIntegrityViolationException ex){
+            throw new DataIntegrityViolation("Não é possivel excluir categoria que já possui produtos cadastrados");
+        }
         return ResponseEntity.noContent().build();
     }
 }
