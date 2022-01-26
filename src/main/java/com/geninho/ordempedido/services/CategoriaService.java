@@ -4,6 +4,9 @@ import com.geninho.ordempedido.domain.Categoria;
 import com.geninho.ordempedido.repositories.CategoriaRepository;
 import com.geninho.ordempedido.services.Exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -41,6 +44,11 @@ public class CategoriaService {
 
     public List<Categoria> findAll(){
         return repo.findAll();
+    }
+
+    public Page<Categoria> findPage(Integer page, Integer linesPerPage, String orderBy, String direction){
+        PageRequest pageRequest = PageRequest.of(page,linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+        return repo.findAll(pageRequest);
     }
 
 }

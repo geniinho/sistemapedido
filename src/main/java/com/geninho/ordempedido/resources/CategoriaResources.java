@@ -6,6 +6,7 @@ import com.geninho.ordempedido.services.CategoriaService;
 import com.geninho.ordempedido.services.Exception.DataIntegrityViolation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -63,4 +64,17 @@ public class CategoriaResources {
         }
         return ResponseEntity.noContent().build();
     }
+
+    @GetMapping(value = "/page")
+    public ResponseEntity<Page> findPage(
+            @RequestParam(value = "page",defaultValue = "0") Integer page,
+            @RequestParam(value = "linePerPage",defaultValue = "24") Integer linesPerPage,
+            @RequestParam(value = "orderBy",defaultValue = "nome") String orderBy,
+            @RequestParam(value = "direction",defaultValue = "ASC") String direction){
+
+        Page<Categoria> list = service.findPage(page,linesPerPage,orderBy,direction);
+        Page<CategoriaDTO> listDto = list.map(obj -> new CategoriaDTO());
+        return ResponseEntity.ok().body(listDto);
+    }
+
 }
