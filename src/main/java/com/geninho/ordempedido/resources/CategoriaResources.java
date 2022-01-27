@@ -11,6 +11,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -39,7 +40,8 @@ public class CategoriaResources {
     }
 
     @PostMapping
-    public ResponseEntity<Void> insert (@RequestBody Categoria obj){
+    public ResponseEntity<Void> insert (@Valid @RequestBody CategoriaDTO objDto){
+        Categoria obj = service.fromDTO(objDto);
         obj = service.insert(obj);
         //retornando uri do obj criando para o cliente
         URI uri = ServletUriComponentsBuilder.
@@ -48,7 +50,8 @@ public class CategoriaResources {
     }
 
     @PutMapping(value = "/{id}")
-    public ResponseEntity<Void> update(@RequestBody Categoria obj,@PathVariable Integer id){
+    public ResponseEntity<Void> update(@Valid @RequestBody CategoriaDTO objDto,@PathVariable Integer id){
+        Categoria obj = service.fromDTO(objDto);
         obj.setId(id);
         obj = service.update(obj);
         return ResponseEntity.noContent().build();
