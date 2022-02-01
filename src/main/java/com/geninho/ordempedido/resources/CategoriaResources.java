@@ -24,6 +24,16 @@ public class CategoriaResources {
     @Autowired
     private CategoriaService service;
 
+    @PostMapping
+    public ResponseEntity<Void> insert (@Valid @RequestBody CategoriaDTO objDto){
+        Categoria obj = service.fromDTO(objDto);
+        obj = service.insert(obj);
+        //retornando uri do obj criando para o cliente
+        URI uri = ServletUriComponentsBuilder.
+                fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
+        return ResponseEntity.created(uri).build();
+    }
+
     @GetMapping
     public ResponseEntity<List<CategoriaDTO>> findAll(){
         List<Categoria> list = service.findAll();
@@ -37,16 +47,6 @@ public class CategoriaResources {
         Categoria obj = service.find(id);
         return ResponseEntity.ok().body(obj);
 
-    }
-
-    @PostMapping
-    public ResponseEntity<Void> insert (@Valid @RequestBody CategoriaDTO objDto){
-        Categoria obj = service.fromDTO(objDto);
-        obj = service.insert(obj);
-        //retornando uri do obj criando para o cliente
-        URI uri = ServletUriComponentsBuilder.
-                fromCurrentRequest().path("/{id}").buildAndExpand(obj.getId()).toUri();
-        return ResponseEntity.created(uri).build();
     }
 
     @PutMapping(value = "/{id}")
