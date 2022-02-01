@@ -2,8 +2,8 @@ package com.geninho.ordempedido.dto;
 
 import com.geninho.ordempedido.domain.Categoria;
 import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 
 public class CategoriaDTO implements Serializable {
