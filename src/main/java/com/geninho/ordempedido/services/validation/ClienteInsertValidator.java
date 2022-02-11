@@ -1,15 +1,22 @@
 package com.geninho.ordempedido.services.validation;
 
+import com.geninho.ordempedido.domain.Cliente;
 import com.geninho.ordempedido.domain.enums.TipoCliente;
 import com.geninho.ordempedido.dto.ClienteNewDTO;
+import com.geninho.ordempedido.repositories.ClienteRepository;
 import com.geninho.ordempedido.resources.exception.FieldMessage;
 import com.geninho.ordempedido.services.validation.Utils.BR;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.ArrayList;
 import java.util.List;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
 public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert, ClienteNewDTO> {
+
+    @Autowired
+    private ClienteRepository repo;
+
     @Override
     public void initialize(ClienteInsert ann) {
     }
@@ -26,7 +33,10 @@ public class ClienteInsertValidator implements ConstraintValidator<ClienteInsert
             list.add(new FieldMessage("cpfOuCnpj","CNPJ inválido."));
         }
 
-        // inclua os testes aqui, inserindo erros na lista
+        Cliente aux = repo.findByEmail(objDto.getEmail());
+        if (aux != null){
+            list.add(new FieldMessage("email","Email já cadastrado!"));
+        }
 
         for (FieldMessage e : list) {
             context.disableDefaultConstraintViolation();
