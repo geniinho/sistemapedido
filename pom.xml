@@ -11,6 +11,7 @@
     <groupId>com.geninho</groupId>
     <artifactId>ordempedido</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>jar</packaging>
     <name>ordempedido</name>
     <description>ordempedido</description>
     <properties>
@@ -67,8 +68,9 @@
         </dependency>
 
         <dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
+            <groupId>org.postgresql</groupId>
+            <artifactId>postgresql</artifactId>
+            <version>42.3.5</version>
         </dependency>
 
     </dependencies>
