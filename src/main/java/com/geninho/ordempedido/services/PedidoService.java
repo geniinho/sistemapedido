@@ -4,10 +4,7 @@ import com.geninho.ordempedido.domain.ItemPedido;
 import com.geninho.ordempedido.domain.PagamentoComBoleto;
 import com.geninho.ordempedido.domain.Pedido;
 import com.geninho.ordempedido.domain.enums.EstadoPagamento;
-import com.geninho.ordempedido.repositories.ItemPedidoRepository;
-import com.geninho.ordempedido.repositories.PagamentoRepository;
-import com.geninho.ordempedido.repositories.PedidoRepository;
-import com.geninho.ordempedido.repositories.ProdutoRepository;
+import com.geninho.ordempedido.repositories.*;
 import com.geninho.ordempedido.services.Exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -33,6 +30,9 @@ public class PedidoService {
     @Autowired
     private ItemPedidoRepository itemPedidoRepository;
 
+    @Autowired
+    private ClienteService clienteService;
+
     public Pedido find (Integer id){
         Optional<Pedido> obj = repo.findById(id);
         return obj.orElseThrow(
@@ -45,6 +45,7 @@ public class PedidoService {
     public Pedido insert(Pedido obj){
         obj.setId(null);
         obj.setInstante(new Date());
+        obj.setCliente(clienteService.find(obj.getCliente().getId()));
         obj.getPagamento().setEstado(EstadoPagamento.PENDENTTE);
         obj.getPagamento().setPedido(obj);
         if (obj.getPagamento() instanceof PagamentoComBoleto){
@@ -60,6 +61,7 @@ public class PedidoService {
             ip.setPedido(obj);
         }
         itemPedidoRepository.saveAll(obj.getItens());
+        System.out.println(obj);
         return obj;
     }
 }
