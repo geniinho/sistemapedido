@@ -15,6 +15,7 @@ import org.springframework.context.annotation.Profile;
 @Configuration
 @Profile("test")
 public class TestConfig {
+
     @Autowired
     private DBService dbService;
 
@@ -25,7 +26,7 @@ public class TestConfig {
     }
 
     @Bean
-    public EmailService emailService(){
+    public EmailService emailService() {
         return new MockEmailService();
     }
 }
