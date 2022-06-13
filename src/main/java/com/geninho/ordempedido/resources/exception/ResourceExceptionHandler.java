@@ -1,5 +1,6 @@
 package com.geninho.ordempedido.resources.exception;
 
+import com.geninho.ordempedido.services.Exception.AuthorizationException;
 import com.geninho.ordempedido.services.Exception.DataIntegrityViolation;
 import com.geninho.ordempedido.services.Exception.ObjectNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -13,6 +14,7 @@ import javax.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
 public class ResourceExceptionHandler {
+
     @ExceptionHandler(ObjectNotFoundException.class)
     public ResponseEntity<StandardError> objectNotFound (ObjectNotFoundException e, HttpServletRequest request){
         StandardError err = new StandardError(HttpStatus.NOT_FOUND.value(), e.getMessage(), System.currentTimeMillis());
@@ -34,5 +36,11 @@ public class ResourceExceptionHandler {
         }
 
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(err);
+    }
+
+    @ExceptionHandler(AuthorizationException.class)
+    public ResponseEntity<StandardError> authorization (AuthorizationException e, HttpServletRequest request){
+        StandardError err = new StandardError(HttpStatus.FORBIDDEN.value(), e.getMessage(), System.currentTimeMillis());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(err);
     }
 }

@@ -3,11 +3,14 @@ package com.geninho.ordempedido.services;
 import com.geninho.ordempedido.domain.Cidade;
 import com.geninho.ordempedido.domain.Cliente;
 import com.geninho.ordempedido.domain.Endereco;
+import com.geninho.ordempedido.domain.enums.Perfil;
 import com.geninho.ordempedido.domain.enums.TipoCliente;
 import com.geninho.ordempedido.dto.ClienteDTO;
 import com.geninho.ordempedido.dto.ClienteNewDTO;
 import com.geninho.ordempedido.repositories.ClienteRepository;
 import com.geninho.ordempedido.repositories.EnderecoRepository;
+import com.geninho.ordempedido.security.UserSS;
+import com.geninho.ordempedido.services.Exception.AuthorizationException;
 import com.geninho.ordempedido.services.Exception.DataIntegrityViolation;
 import com.geninho.ordempedido.services.Exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +38,10 @@ public class ClienteService {
     private BCryptPasswordEncoder pe;
 
     public Cliente find(Integer id) {
+        UserSS user = UserService.authenticated();
+        if (user==null || !user.hasRole(Perfil.ADMIN) && !id.equals(user.getId())){
+            throw new AuthorizationException("Acesso negado");
+        }
         Optional<Cliente> obj = repo.findById(id);
         return obj.orElseThrow(() -> new ObjectNotFoundException(
                 "Objeto não encontrado!"));
