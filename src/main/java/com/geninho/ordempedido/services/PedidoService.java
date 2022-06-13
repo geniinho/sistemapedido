@@ -1,12 +1,18 @@
 package com.geninho.ordempedido.services;
 
+import com.geninho.ordempedido.domain.Cliente;
 import com.geninho.ordempedido.domain.ItemPedido;
 import com.geninho.ordempedido.domain.PagamentoComBoleto;
 import com.geninho.ordempedido.domain.Pedido;
 import com.geninho.ordempedido.domain.enums.EstadoPagamento;
 import com.geninho.ordempedido.repositories.*;
+import com.geninho.ordempedido.security.UserSS;
+import com.geninho.ordempedido.services.Exception.AuthorizationException;
 import com.geninho.ordempedido.services.Exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -66,5 +72,15 @@ public class PedidoService {
         itemPedidoRepository.saveAll(obj.getItens());
         emailService.sendOrderConfirmationHtmlEmail(obj);
         return obj;
+    }
+
+    public Page<Pedido> findPage(Integer page, Integer linesPerPage, String orderBy, String direction) {
+        UserSS user = UserService.authenticated();
+        if (user == null) {
+            throw new AuthorizationException("Acesso negado");
+        }
+        PageRequest pageRequest = PageRequest.of(page, linesPerPage, Sort.Direction.valueOf(direction), orderBy);
+        Cliente cliente =  clienteService.find(user.getId());
+        return repo.findByCliente(cliente, pageRequest);
     }
 }
