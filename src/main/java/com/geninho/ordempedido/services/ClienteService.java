@@ -14,6 +14,7 @@ import com.geninho.ordempedido.services.Exception.AuthorizationException;
 import com.geninho.ordempedido.services.Exception.DataIntegrityViolation;
 import com.geninho.ordempedido.services.Exception.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.awt.image.BufferedImage;
 import java.net.URI;
 import java.util.List;
 import java.util.Optional;
@@ -41,6 +43,12 @@ public class ClienteService {
 
     @Autowired
     S3Service s3Service;
+
+    @Autowired
+    private ImageService imageService;
+
+    @Value("${img.prefix.client.profile}")
+    private String prefix;
 
     public Cliente find(Integer id) {
         UserSS user = UserService.authenticated();
@@ -87,14 +95,14 @@ public class ClienteService {
     }
 
     public Cliente fromDTO(ClienteDTO objDto) {
-        return new Cliente(objDto.getId(), objDto.getNome(), objDto.getEmail(), null, null,null, null);
+        return new Cliente(objDto.getId(), objDto.getNome(), objDto.getEmail(), null, null,null);
     }
 
     public Cliente fromDTO(ClienteNewDTO objDto) {
 
         //instanciando cliente
         Cliente cli = new Cliente(null, objDto.getNome(), objDto.getEmail(), objDto.getCpfOuCnpj(),
-                TipoCliente.toEnum(objDto.getTipo()), pe.encode(objDto.getSenha()), null);
+                TipoCliente.toEnum(objDto.getTipo()), pe.encode(objDto.getSenha()));
 
         //instanciando cidade
         Cidade cid = new Cidade(objDto.getCidadeId(), null, null);
@@ -126,10 +134,8 @@ public class ClienteService {
         if (user == null){
             throw new AuthorizationException("Acesso negado.");
         }
-        URI uri =  s3Service.uploadFile(multipartFile);
-        Optional<Cliente> cliente = repo.findById(user.getId());
-        cliente.get().setImageURL(uri.toString());
-        repo.save(cliente.get());
-        return uri;
+        BufferedImage jpgImage = imageService.getJpgImageFromFile(multipartFile);
+        String fileName = prefix + user.getId() + ".jpg";
+        return s3Service.uploadFile(imageService.getInputStream(jpgImage, "jpg"), fileName, "image");
     }
 }

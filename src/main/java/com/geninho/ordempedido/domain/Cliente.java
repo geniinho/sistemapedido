@@ -55,13 +55,12 @@ public class Cliente implements Serializable {
     @OneToMany(mappedBy="cliente")
     private List<Pedido> pedidos = new ArrayList<>();
 
-    public String imageURL;
 
     public Cliente() {
         addPerfil(Perfil.CLIENTE);
     }
 
-    public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipo, String senha, String imageURL) {
+    public Cliente(Integer id, String nome, String email, String cpfOuCnpj, TipoCliente tipo, String senha) {
         super();
         this.id = id;
         this.nome = nome;
@@ -69,7 +68,6 @@ public class Cliente implements Serializable {
         this.cpfOuCnpj = cpfOuCnpj;
         this.tipo = (tipo==null) ? null : tipo.getCod();
         this.senha = senha;
-        this.imageURL = imageURL;
         addPerfil(Perfil.CLIENTE);
     }
 
@@ -153,13 +151,6 @@ public class Cliente implements Serializable {
         this.pedidos = pedidos;
     }
 
-    public String getImageURL() {
-        return imageURL;
-    }
-
-    public void setImageURL(String imageURL) {
-        this.imageURL = imageURL;
-    }
 
     @Override
     public int hashCode() {
